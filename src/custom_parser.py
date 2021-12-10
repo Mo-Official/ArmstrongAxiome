@@ -1,26 +1,26 @@
+"""
+customer_parser.py contains all functions related to parsing input strings.
+Attribute names must consist of only capital english letter A-Z
+
+When passing Attributes to the parser the input string must have to following form:
+"{A,B,C,D,E,F,G}"
+
+When passing Dependancies to the parser to the input string must:
+* use -> to isolate sides
+* attributes 
+
+"""
+
 from sre_constants import error
 from typing import List
 from dataclasses import dataclass
 from re import compile
+from src.models import Dependacy, Side, Attribute
+
 
 STRICT_MODE = True # Turn off to stop raising errors
 
-@dataclass
-class Attribute:
-    """A class for an Attribute of a DB Dependancy"""
-    id:str
 
-@dataclass
-class Side:
-    """A Side of a functional DB Dependancy"""
-    attributes:List[Attribute]
-
-@dataclass
-class Dependacy:
-    """A functional DB Dependacy.
-    Has a right and a left side."""
-    left_side:Side
-    right_side:Side
 
 def parse_attributes(input_string) -> List[Attribute]:
     """Parse an input string to find attributes.
@@ -65,15 +65,15 @@ def parse_dependancy(input_string) -> Dependacy:
     
     # TODO: Check if each side has known attributes
 
-    def parse_right_side(input_string):
+    def parse_left_side(input_string):
         right_side_prg = compile("[A-Z]+\-\>")
         right_side_args = right_side_prg.findall(input_string)[0][:-2]
-        return [Attribute(arg) for arg in right_side_args]
+        return Side([Attribute(arg) for arg in right_side_args])
     
-    def parse_left_side(input_string):
+    def parse_right_side(input_string):
         left_side_prg = compile("\-\>[A-Z]+")
         left_side_args = left_side_prg.findall(input_string)[0][2:]
-        return [Attribute(arg) for arg in left_side_args]
+        return Side([Attribute(arg) for arg in left_side_args])
 
     if validate_input(input_string):
         return Dependacy(parse_left_side(input_string), parse_right_side(input_string))
