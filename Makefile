@@ -13,7 +13,7 @@ clean:
 	rm -rf __pycache__
 	rm -rf $(VENV)
 
-update_req:
-	pip freeze > requirements.txt
+req: $(VENV)/bin/activate
+	$(PIP) freeze > requirements.txt
 
- .PHONY: run clean
+ .PHONY: run clean req
