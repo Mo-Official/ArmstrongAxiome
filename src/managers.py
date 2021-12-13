@@ -1,44 +1,59 @@
 from dataclasses import dataclass
-from typing import List, Tuple, Union
+from typing import Iterable, List, MutableSequence, Tuple, Union
 from src.models import Dependacy, Attribute, Side
 
 
 class DependanciesManager:
-    dependacies:List[Dependacy] = []
+    dependacies: List[Dependacy] = []
+    derived_dependacies: List[Dependacy] = []
 
-    def find_related_dependancy(self, attribute:Union[Attribute, List[Attribute]]) -> List[Dependacy]:
-        "Finds all dependancies that has the given attribute on the left side"
-        return [d for d in self.dependacies if attribute in d.left_side.attributes]
-
-    def find_full_dependant(self, attribute:Attribute) -> List[Dependacy]:
-        """Finds all dependancies that has *only* the given attribute on the left side"""
-        return [d for d in self.dependacies if [attribute] == d.left_side.attributes]
-
-    def is_trivial(self, dep1:Dependacy) -> bool:
-        """returns True if this depenancy is proven trivial
-        Trivial dependancies should be removed"""
-        if dep1.right_side.attributes in dep1.left_side.attributes:
-            return True
-        return False
-
-    def is_extended(self, dep1:Dependacy, dep2:Dependacy) -> bool:
-        """returns True if dep2 extends dep1"""
-        pass
-
-    def if_fully_dependant(self, att1:Attribute, att2:Attribute) -> bool:
-        """returns True if attribute2 is fully dependant on att1"""
-        pass
-
-    def add(self, dependancy:Dependacy):
+    def add(self, dependancy: Dependacy):
         """Adds a dependancy to the list"""
-        if not dependancy in self.dependacies:
-            self.dependacies.append(dependancy)
+        if isinstance(dependancy, Dependacy) and not dependancy in self.dependacies:
+            return self.dependacies.append(dependancy)
+        if isinstance(dependancy, Iterable):
+            for d in dependancy:
+                self.add(d)
+
+    def add_derived(self, dependancy):
+        """Adds a dependancy to the deriviation list"""
+        
+        if isinstance(dependancy, Dependacy) and not dependancy in self.derived_dependacies:
+            return self.derived_dependacies.append(dependancy)
+        if isinstance(dependancy, MutableSequence):
+            for d in dependancy:
+                self.add_derived(d)
+    
+    def clear_derived(self):
+        self.derived_dependacies.clear()
+
+            
+        
 
 
 class AttributeManager:
-    attributes:List[Attribute] = []
+    attributes: List[Attribute] = []
 
-    def add(self, attribute:Attribute):
+    def add(self, attribute: Attribute):
         """Adds an attribute to the list"""
         if not attribute in self.attributes:
             self.attributes.append(attribute)
+
+
+class RulesManager:
+    rules: list
+
+    def __init__(self, ruleset) -> None:
+        self.rules = ruleset
+
+    def find_rule(self, d):
+        """
+        Finds a pattern in the dependancy and returns a rule or None.
+        Loops through the set of the rules and returns the first one that has a matching criteria.
+        """
+        return [rule for rule in self.rules if rule["criteria"]["test"](d)]
+ 
+
+    def run_rule_action(self, rule, dep):
+        """Runs the function of the passed rule on the dependancy"""
+        rule["action"](dep)
