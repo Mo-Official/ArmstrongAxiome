@@ -1,0 +1,18 @@
+G->BD extended by G->HF
+now its GH->BD
+GH->BD extended by G->HF
+now its GHF->BD
+GHF->BD extended by H->DEF
+now its GHFD->BD
+Because of H->DEF we can remove D from right side of GHFD->BD
+Now it's GHFD->B
+GHFD->B extended by H->DEF
+now its GHFDE->B
+GHFDE->B extended by H->DEF
+now its GHFDEF->B
+GHFDEF->B extended by F->B
+now its GHFDEFB->B
+Because of F->B we can remove B from right side of GHFDEFB->B
+Now it's GHFDEFB->
+All Attributes on the right side has been eliminated
+Thus it can be derived
