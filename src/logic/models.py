@@ -1,7 +1,4 @@
-from dataclasses import dataclass
-from typing import List, NoReturn, Optional
-
-
+from typing import List
 
 class Attribute:
     """A class for an Attribute of a DB Dependancy"""
@@ -20,7 +17,9 @@ class Attribute:
         if isinstance(__o, Attribute):
             return True if __o.id == self.id else False
         return False
-
+    
+    def __hash__(self) -> int:
+        return self.id.__hash__()
 
 class Side:
     """A Side of a functional DB Dependancy"""
@@ -29,8 +28,9 @@ class Side:
         self.attributes = attributes
 
     def __str__(self) -> str:
-        return "".join([str(a) for a in self.attributes])
-    
+        return "".join([a.id for a in self.attributes])
+        
+
     def __repr__(self) -> str:
         return '"' + self.__str__() + '"'
     
@@ -39,8 +39,6 @@ class Side:
             if self.attributes in __o.attributes and __o.attributes in self.attributes:
                 return True
         return False
-
-
 
 class Dependacy:
     """A functional DB Dependacy.
@@ -62,7 +60,7 @@ class Dependacy:
 
     def __eq__(self, __o: object) -> bool:
         if isinstance(__o, Dependacy):
-            if self.left_side == __o.left_side and\
-                self.right_side == __o.right_side:
+            if self.left_side.attributes == __o.left_side.attributes and\
+                self.right_side.attributes == __o.right_side.attributes:
                 return True
         return False
