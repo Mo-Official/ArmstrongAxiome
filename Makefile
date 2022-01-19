@@ -3,7 +3,7 @@ PYTHON = $(VENV)/bin/python3
 PIP = $(VENV)/bin/pip
 
 run: $(VENV)/bin/activate
-	$(PYTHON) main.py
+	$(PYTHON) app.py
 
 $(VENV)/bin/activate: requirements.txt
 	python3 -m venv $(VENV)
@@ -16,4 +16,8 @@ clean:
 req: $(VENV)/bin/activate
 	$(PIP) freeze > requirements.txt
 
- .PHONY: run clean req
+debug: $(VENV)/bin/activate
+	$(PYTHON) debug.py
+
+
+ .PHONY: run clean req debug
