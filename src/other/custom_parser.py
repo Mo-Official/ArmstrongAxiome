@@ -1,21 +1,8 @@
-"""
-customer_parser.py contains all functions related to parsing input strings.
-Attribute names must consist of only capital english letter A-Z
-
-When passing Attributes to the parser the input string must have to following form:
-"{A,B,C,D,E,F,G}"
-
-When passing Dependancies to the parser to the input string must:
-* use -> to isolate sides
-* attributes 
-
-"""
-
+from ..logic.models import Dependacy,Side,Attribute
 from sre_constants import error
 from typing import List
-from dataclasses import dataclass
 from re import compile
-from src.models import Dependacy, Side, Attribute
+
 
 
 STRICT_MODE = True  # Turn off to stop raising errors
@@ -57,7 +44,7 @@ def parse_dependancy(input_string) -> Dependacy:
         search_res, _ = unvalid_input.subn("", input_string)
         if search_res:
             if STRICT_MODE:
-                raise error(f"Input {search_res} is invalid")
+                raise error(f"Input '{search_res}' is invalid")
             else:
                 print(f"Skipping ({input_string}) because it's invalid")
                 return False
@@ -79,26 +66,3 @@ def parse_dependancy(input_string) -> Dependacy:
     if validate_input(input_string):
         return Dependacy(parse_left_side(input_string), parse_right_side(input_string))
 
-
-if __name__ == "__main__":
-    import pprint
-
-    attribut_menge = "{A,B,C,D}"
-    attributes = parse_attributes(attribut_menge)
-    dependacies_menge = [
-        "A->D",
-        "BD->ED",
-        "BC->H",
-        "D->A",
-        "H->DEF",
-        "F->B",
-        "E->C",
-        "G->HF",
-    ]
-    dependacies = []
-    for d in dependacies_menge:
-        dependacies.append(parse_dependancy(d))
-    print("Attributes are: ")
-    pprint.pprint(attributes)
-    print("Dependancies are: ")
-    pprint.pprint(dependacies)
